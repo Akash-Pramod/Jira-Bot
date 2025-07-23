@@ -1,3 +1,4 @@
+import { jiraConfig } from "../config/jiraConfig.js";
 import { geminiResponse } from "../services/geminiService.js";
 import { createJiraTicket, getIssueTypes, getProjectKeys } from "../services/jiraService.js";
 import { extractJson } from '../utils/extractJson.js';
@@ -56,7 +57,13 @@ export const createTicketFromPrompt = async (req, res) => {
             projectKey
         });
 
-        res.json({ message: "Ticket created successfully", ticket: jiraTicket });
+        // created ticket url
+        const ticketUrl = `${jiraConfig.baseUrl}/browse/${jiraTicket.key}`
+        res.json({
+            message: "Ticket created successfully",
+            ticket: jiraTicket,
+            ticketUrl
+        });
     } catch (error) {
         console.error('Error: ', error);
         res.status(500).json({ error: "Something went wrong" });

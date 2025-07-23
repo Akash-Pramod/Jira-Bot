@@ -1,10 +1,4 @@
-/**
- * Extracts the first JSON object found in a text string.
- * @param {string} text - The text containing JSON.
- * @returns {Object} Parsed JSON object.
- * @throws {Error} If no JSON object found or parsing fails.
- */
-
+// Function to extract JSON
 export const extractJson = (text) => {
     const match = text.match(/\{[\s\S]*\}/);
 

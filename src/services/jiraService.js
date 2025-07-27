@@ -38,9 +38,24 @@ export const getProjectKeys = async () => {
     }
 };
 
+export const getAllUsers = async () => {
+    try {
+        const res = await axios.get(`${jiraConfig.baseUrl}/rest/api/3/users/search`, {
+            headers: {
+                Authorization: authHeader,
+                'Accept': 'application/json'
+            }
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Error while getting the list of all teams: ", error.message);
+        return [];
+    }
+};
+
 
 // create jira ticket function
-export const createJiraTicket = async ({ summary, description, issueType, projectKey }) => {
+export const createJiraTicket = async ({ summary, description, issueType, projectKey, assigneeId }) => {
     const url = `${jiraConfig.baseUrl}/rest/api/3/issue`;
 
     const fields = {
@@ -58,8 +73,13 @@ export const createJiraTicket = async ({ summary, description, issueType, projec
                 }
             ]
         },
-        issuetype: { name: issueType }
+        issuetype: { name: issueType },
     };
+
+    // Only add assignee if we have assigneeId
+    if (assigneeId) {
+        fields.assignee = { accountId: assigneeId };
+    }
 
     const data = { fields };
 
@@ -78,4 +98,4 @@ export const createJiraTicket = async ({ summary, description, issueType, projec
         console.error("Jira create error data:", error.response?.data);
         throw error;
     }
-}
+};

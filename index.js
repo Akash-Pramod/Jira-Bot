@@ -13,7 +13,6 @@ const app = express();
 app.use(express.json());
 
 app.use('/api/v1', geminiRoute);
-app.use('/api/v1', chatRoute);
 app.use('/api/v1', ticketRoute);
 
 // Start server

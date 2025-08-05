@@ -17,6 +17,20 @@ export const createTicketFromPrompt = async (req, res) => {
 
     try {
         if (wantsTicket) {
+            const promptLower = prompt.toLowerCase().trim();
+            const isUnclear = (
+                promptLower === 'create a bug ticket' ||
+                promptLower === 'raise a bug' ||
+                promptLower === 'create ticket' ||
+                !prompt.includes(':') && prompt.length < 25
+            );
+
+            if (isUnclear) {
+                return res.status(400).json({
+                    message: "Please describe the ticket in more detail. Include the error/task message, steps to produce/reproduce, and expected vs actual behavior.",
+                    status: "need_more_info"
+                });
+            }
             const validIssueTypes = await getIssueTypes();
             console.log("Valid issue types: ", validIssueTypes.join(', '));
 
@@ -58,7 +72,7 @@ export const createTicketFromPrompt = async (req, res) => {
             // Get all users and map assignee
             const allUsers = await getAllUsers() || [];
             const assigneeName = (generated.assignee || '').toLowerCase().trim();
-            const foundUser = assigneeName 
+            const foundUser = assigneeName
                 ? allUsers.find(user =>
                     user.displayName.toLowerCase().includes(assigneeName) ||
                     user.emailAddress?.toLowerCase() === assigneeName
